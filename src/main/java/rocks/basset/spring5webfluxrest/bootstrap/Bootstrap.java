@@ -1,10 +1,8 @@
-package rocks.basset.spring5webfluxrest.Bootstrap;
+package rocks.basset.spring5webfluxrest.bootstrap;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import rocks.basset.spring5webfluxrest.domain.Category;
 import rocks.basset.spring5webfluxrest.domain.Vendor;
