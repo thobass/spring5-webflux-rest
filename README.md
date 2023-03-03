@@ -1,0 +1,1 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/thobass/spring5-webflux-rest/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/thobass/spring5-webflux-rest/tree/main)
