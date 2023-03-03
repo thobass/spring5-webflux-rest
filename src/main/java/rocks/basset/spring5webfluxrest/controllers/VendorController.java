@@ -1,9 +1,9 @@
 package rocks.basset.spring5webfluxrest.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.reactivestreams.Publisher;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import rocks.basset.spring5webfluxrest.domain.Vendor;
@@ -23,5 +23,17 @@ public class VendorController {
     @GetMapping("/api/v1/vendors/{id}")
     public Mono<Vendor> findById(@PathVariable String id){
         return vendorRepository.findById(id);
+    }
+
+    @PostMapping("/api/v1/vendors")
+    @ResponseStatus(HttpStatus.CREATED)
+    Mono<Void> create(@RequestBody Publisher<Vendor> vendorPublisher){
+        return vendorRepository.saveAll(vendorPublisher).then();
+    }
+
+    @PutMapping("/api/v1/vendors/{id}")
+    Mono<Vendor> update(@PathVariable String id, @RequestBody Vendor vendor){
+        vendor.setId(id);
+        return vendorRepository.save(vendor);
     }
 }
