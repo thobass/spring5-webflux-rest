@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class VendorControllerTest {
@@ -91,4 +93,60 @@ class VendorControllerTest {
                 .exchange()
                 .expectStatus().isOk();
     }
+
+    @Test
+    void update_WithChanges_firstname(){
+        //GIVEN
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(Vendor.builder().build()));
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(Vendor.builder().firstName("Thomas").build()));
+        Mono<Vendor> createVendor = Mono.just(Vendor.builder().firstName("Thomas").build());
+
+        //WHEN
+        //THEN
+        webTestClient.patch()
+                .uri("/api/v1/vendors/someid")
+                .body(createVendor, Vendor.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        verify(vendorRepository).save(any(Vendor.class));
+    }
+
+    @Test
+    void update_WithChanges_lastname(){
+        //GIVEN
+        given(vendorRepository.save(any(Vendor.class))).willReturn(Mono.just(Vendor.builder().build()));
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(Vendor.builder().lastName("Basset").build()));
+
+        Mono<Vendor> createVendor = Mono.just(Vendor.builder().lastName("Basset").build());
+
+        //WHEN
+        //THEN
+        webTestClient.patch()
+                .uri("/api/v1/vendors/someid")
+                .body(createVendor, Vendor.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        verify(vendorRepository).save(any(Vendor.class));
+    }
+
+    @Test
+    void update_WithNoChanges(){
+        //GIVEN
+        given(vendorRepository.findById(anyString())).willReturn(Mono.just(Vendor.builder().build()));
+
+        Mono<Vendor> createVendor = Mono.just(Vendor.builder().build());
+
+        //WHEN
+        //THEN
+        webTestClient.patch()
+                .uri("/api/v1/vendors/someid")
+                .body(createVendor, Vendor.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        verify(vendorRepository, never()).save(any(Vendor.class));
+    }
+
 }
