@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryControllerTest {
@@ -92,5 +94,44 @@ class CategoryControllerTest {
                 .exchange()
                 .expectStatus()
                 .isOk();
+    }
+
+    @Test
+    void patch_withChanges() {
+        //GIVEN
+        given(categoryRepository.save(any(Category.class))).willReturn(Mono.just(Category.builder().build()));
+        given(categoryRepository.findById(anyString())).willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> categoryMono = Mono.just(Category.builder().description("category").build());
+
+        //WHEN
+        //THEN
+        webTestClient.patch()
+                .uri("/api/v1/categories/1")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        verify(categoryRepository).save(any(Category.class));
+    }
+
+    @Test
+    void patch_withNoChanges() {
+        //GIVEN
+        given(categoryRepository.findById(anyString())).willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> categoryMono = Mono.just(Category.builder().build());
+
+        //WHEN
+        //THEN
+        webTestClient.patch()
+                .uri("/api/v1/categories/1")
+                .body(categoryMono, Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        verify(categoryRepository, never()).save(any(Category.class));
     }
 }
